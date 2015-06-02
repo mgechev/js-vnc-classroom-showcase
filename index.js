@@ -91,18 +91,18 @@ proxy.setCredentialsProvider(function (credentials) {
   }).pop();
   console.log(host, token, credentials);
   if (host) {
-    var keyboardInterceptor;
-    var mouseInterceptor;
+    var keyboardEnabled;
+    var mouseEnabled;
     if (host.writeToken === token) {
-      keyboardInterceptor = mouseInterceptor = true;
+      keyboardEnabled = mouseEnabled = true;
     } else {
-      keyboardInterceptor = mouseInterceptor = false;
+      keyboardEnabled = mouseEnabled = false;
     }
     return ES6Promise.resolve({
       host: host.hostname,
       port: host.port,
-      keyboardInterceptor: keyboardInterceptor,
-      mouseInterceptor: mouseInterceptor,
+      keyboardEnabled: keyboardEnabled,
+      mouseEnabled: mouseEnabled,
       password: host.password
     });
   }
