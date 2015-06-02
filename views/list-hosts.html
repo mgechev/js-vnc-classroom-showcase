@@ -17,7 +17,7 @@ No hosts
     Read-only
   </th>
   <th>
-    Write
+    Read and Write
   </th>
   <th>
     Remove
@@ -28,13 +28,20 @@ No hosts
   <td><%= hosts[i].hostname %></td>
   <td><%= hosts[i].port %></td>
   <td><%= hosts[i].password %></td>
-  <td>Copy</td>
-  <td>Copy</td>
-  <form method="delete" action="/admin/hosts/<%= hosts[i].id %>">
-    <td><input type="submit" class="btn btn-danger" value="Remove"/></td>
-  </form>
+  <td><input type="text" readonly value="" data-token="<%= hosts[i].readToken %>" class="copy-input"></td>
+  <td><input type="text" readonly value="" data-token="<%= hosts[i].writeToken %>" class="copy-input"></td>
+  <td><a href="/admin/hosts/delete/<%= hosts[i].id%>" class="btn btn-danger">Remove</a></td>
 </tr>
 <% } %>
 </table>
 <% } %>
+<script>
+(function () {
+ var inputs = document.getElementsByClassName('copy-input');
+ for (var i = 0; i < inputs.length; i += 1) {
+  var token = inputs[i].getAttribute('data-token');
+  inputs[i].value = location.protocol + '//' + location.host + '/?' + token;
+ }
+ }());
+</script>
 <% include footer.html %>

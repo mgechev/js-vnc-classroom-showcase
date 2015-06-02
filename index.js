@@ -71,6 +71,15 @@ app.post('/admin/hosts', urlencodedParser, function (req, res) {
   }));
   res.redirect(301, '/admin/hosts/list');
 });
+app.get('/admin/hosts/delete/:id', function (req, res) {
+  list.getAll().forEach(function (c) {
+    if (c.id === req.params.id) {
+      list.remove(c);
+      return;
+    }
+  });
+  res.redirect(301, '/admin/hosts/list');
+});
 
 server.listen(8090);
 //proxy.init(5555);
