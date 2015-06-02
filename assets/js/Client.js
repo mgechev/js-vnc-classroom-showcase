@@ -399,11 +399,7 @@
 
   Client.prototype.connect = function (config) {
     this._socket = io.connect(Config.URL, { 'force new connection': true });
-    this._socket.emit('init', {
-      host: config.host,
-      port: config.port,
-      password: config.password
-    });
+    this._socket.emit('init', config);
     return this._addHandlers();
   };
 

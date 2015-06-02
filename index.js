@@ -19,7 +19,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 list.add(new VNCHost({
   hostname: '192.168.0.100',
   port: 5900,
-  password: 'demo',
+  password: 'paralaks',
   readToken: uid(10),
   writeToken: uid(10),
   id: uid(5)
@@ -48,8 +48,8 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 app.use(express.static(__dirname + '/assets/'));
 
-app.get('/', function () {
-  // default vnc client
+app.get('/', function (req, res) {
+  res.render('vnc');
 });
 app.get('/admin', function (req, res) {
   res.redirect(301, '/admin/hosts/list');
@@ -89,6 +89,7 @@ proxy.setCredentialsProvider(function (credentials) {
   var host = list.getAll().filter(function (c) {
     return c.writeToken === token || c.readToken === token;
   }).pop();
+  console.log(host, token, credentials);
   if (host) {
     var keyboardInterceptor;
     var mouseInterceptor;
