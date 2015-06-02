@@ -10,21 +10,17 @@ var server = http.createServer(app);
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
+app.use(express.static(__dirname + '/assets/'));
 
-app.use(express.static(__dirname + '/views/'));
 
 app.get('/admin', function (req, res) {
   res.redirect(301, '/admin/hosts/list');
 });
 app.get('/admin/hosts/list', function (req, res) {
-  res.render('admin', {
-    layout: 'list-hosts'
-  });
+  res.render('list-hosts');
 });
 app.get('/admin/hosts/add', function (req, res) {
-  res.render('admin', {
-    layout: 'list-hosts'
-  });
+  res.render('add-host');
 });
 
 server.listen(8090);
