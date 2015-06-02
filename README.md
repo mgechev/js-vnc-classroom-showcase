@@ -1,2 +1,6 @@
-# js-vnc-classroom-showcase
-Showcase of the JavaScript VNC client for classroom applications
+js-vnc-demo-project
+===================
+
+Demo project for the course Advanced JavaScript at FMI
+
+Node 0.10.32 required.
