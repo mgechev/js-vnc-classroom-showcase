@@ -6,12 +6,14 @@
     "url": "http://github.com/mgechev/js-vnc"
   },
   "dependencies": {
+    "body-parser": "^1.12.4",
     "connect": "~2.8.5",
     "ejs": "^2.3.1",
     "es6-map": "^0.1.1",
     "es6-promise": "^2.1.1",
     "express": "~4.12.4",
     "rfb": "^0.2.3",
-    "socket.io": "^0.9.17"
+    "socket.io": "^0.9.17",
+    "uid": "0.0.2"
   }
 }

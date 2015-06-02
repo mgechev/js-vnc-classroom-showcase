@@ -1,3 +1,40 @@
 <% include header.html %>
-LIST HOSTS
+<% if (!hosts || !hosts.length) { %>
+No hosts
+<% } else { %>
+<table class="table">
+<tr>
+  <th>
+    Host
+  </th>
+  <th>
+    Port
+  </th>
+  <th>
+    Password
+  </th>
+  <th>
+    Read-only
+  </th>
+  <th>
+    Write
+  </th>
+  <th>
+    Remove
+  </th>
+</tr>
+<% for (var i = 0; i < hosts.length; i++) {%>
+<tr>
+  <td><%= hosts[i].hostname %></td>
+  <td><%= hosts[i].port %></td>
+  <td><%= hosts[i].password %></td>
+  <td>Copy</td>
+  <td>Copy</td>
+  <form method="delete" action="/admin/hosts/<%= hosts[i].id %>">
+    <td><input type="submit" class="btn btn-danger" value="Remove"/></td>
+  </form>
+</tr>
+<% } %>
+</table>
+<% } %>
 <% include footer.html %>
