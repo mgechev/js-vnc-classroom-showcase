@@ -1,6 +1,6 @@
-js-vnc-demo-project
+VNC Classroom Showcase
 ===================
 
-Demo project for the course Advanced JavaScript at FMI
+Sample application which allows sharing of VMs with presentational and control purposes. Applicable in education.
 
 Node 0.10.32 required.
