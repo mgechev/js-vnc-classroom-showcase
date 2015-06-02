@@ -111,4 +111,5 @@ proxy.setCredentialsProvider(function (credentials) {
   }
   return ES6Promise.reject();
 });
-//proxy.init(5555);
+
+proxy.start(5555);
