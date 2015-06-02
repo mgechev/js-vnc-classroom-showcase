@@ -416,6 +416,10 @@
         self._scaleScreen(config);
         self._initEventListeners();
         resolve();
+        if (!config.mouseEnabled && !config.keyboardEnabled) {
+          self._screen.removeHandlers();
+          canvas.style.cursor = 'default';
+        }
         clearTimeout(timeout);
       });
       self._socket.on('frame', function (frame) {

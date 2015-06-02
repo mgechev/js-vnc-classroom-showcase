@@ -94,13 +94,9 @@ proxy.setCredentialsProvider(function (credentials) {
     var keyboardInterceptor;
     var mouseInterceptor;
     if (host.writeToken === token) {
-      keyboardInterceptor = mouseInterceptor = function () {
-        return true;
-      };
+      keyboardInterceptor = mouseInterceptor = true;
     } else {
-      keyboardInterceptor = mouseInterceptor = function () {
-        return false;
-      };
+      keyboardInterceptor = mouseInterceptor = false;
     }
     return ES6Promise.resolve({
       host: host.hostname,
