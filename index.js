@@ -14,6 +14,7 @@ var server = http.createServer(app);
 var RFBHostCollection = require('./lib/model/RFBHostCollection');
 var list = new RFBHostCollection();
 var RFBHost = require('./lib/model/RFBHost');
+var RemoteConnection = require('./lib/model/RemoteConnection');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 list.add(new RFBHost({
@@ -100,13 +101,13 @@ proxy.setCredentialsProvider(function (credentials) {
     }
     // RemoteSession object
     // connects RFBHost with access rights
-    return ES6Promise.resolve({
-      host: host.hostname,
-      port: host.port,
-      keyboardEnabled: keyboardEnabled,
-      mouseEnabled: mouseEnabled,
-      password: host.password
-    });
+    return ES6Promise.resolve(new RemoteConnection({
+      host: host,
+      accessRights: {
+        keyboardEnabled: keyboardEnabled,
+        mouseEnabled: mouseEnabled
+      }
+    }));
   }
   return ES6Promise.reject();
 });
