@@ -11,12 +11,12 @@ var ES6Promise = require('es6-promise').Promise;
 var app = express();
 var server = http.createServer(app);
 
-var HostCollection = require('./lib/model/HostCollection');
-var list = new HostCollection();
-var VNCHost = require('./lib/model/VNCHost');
+var RFBHostCollection = require('./lib/model/RFBHostCollection');
+var list = new RFBHostCollection();
+var RFBHost = require('./lib/model/RFBHost');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-list.add(new VNCHost({
+list.add(new RFBHost({
   hostname: '192.168.0.100',
   port: 5900,
   password: 'paralaks',
@@ -25,7 +25,7 @@ list.add(new VNCHost({
   id: uid(5)
 }));
 
-list.add(new VNCHost({
+list.add(new RFBHost({
   hostname: '192.168.0.101',
   port: 5900,
   password: 'demo',
@@ -34,7 +34,7 @@ list.add(new VNCHost({
   id: uid(5)
 }));
 
-list.add(new VNCHost({
+list.add(new RFBHost({
   hostname: '192.168.0.121',
   port: 5900,
   password: 'paralaks',
@@ -63,7 +63,7 @@ app.get('/admin/hosts/add', function (req, res) {
   res.render('add-host');
 });
 app.post('/admin/hosts', urlencodedParser, function (req, res) {
-  list.add(new VNCHost({
+  list.add(new RFBHost({
     id: uid(5),
     readToken: uid(10),
     writeToken: uid(10),
@@ -98,6 +98,8 @@ proxy.setCredentialsProvider(function (credentials) {
     } else {
       keyboardEnabled = mouseEnabled = false;
     }
+    // RemoteSession object
+    // connects RFBHost with access rights
     return ES6Promise.resolve({
       host: host.hostname,
       port: host.port,
