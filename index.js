@@ -15,33 +15,55 @@ var RFBHostCollection = require('./lib/model/RFBHostCollection');
 var list = new RFBHostCollection();
 var RFBHost = require('./lib/model/RFBHost');
 var RemoteConnection = require('./lib/model/RemoteConnection');
+var AccessRegistry = require('./lib/model/AccessRegistry');
+var ACCESS_RIGHTS = require('./lib/model/ACCESS_RIGHTS');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+function generateAccessTokens(id) {
+  var tokens = Object.keys(ACCESS_RIGHTS).map(function (key) {
+    var obj = {};
+    obj[key + 'Token'] = uid(5);
+    return obj;
+  }).reduce(function (a, c) {
+    for (var key in c) {
+      a[key] = c[key];
+    }
+    return a;
+  }, {});
+  AccessRegistry.set(id, tokens);
+}
+
+var id = uid(5);
+generateAccessTokens(id);
 list.add(new RFBHost({
   hostname: '192.168.0.100',
   port: 5900,
   password: 'paralaks',
   readToken: uid(10),
   writeToken: uid(10),
-  id: uid(5)
+  id: id
 }));
 
+var id = uid(5);
+generateAccessTokens(id);
 list.add(new RFBHost({
   hostname: '192.168.0.101',
   port: 5900,
   password: 'demo',
   readToken: uid(10),
   writeToken: uid(10),
-  id: uid(5)
+  id: id
 }));
 
+var id = uid(5);
+generateAccessTokens(id);
 list.add(new RFBHost({
   hostname: '192.168.0.121',
   port: 5900,
   password: 'paralaks',
   readToken: uid(10),
   writeToken: uid(10),
-  id: uid(5)
+  id: id
 }));
 
 app.engine('.html', require('ejs').__express);
@@ -57,21 +79,23 @@ app.get('/admin', function (req, res) {
 });
 app.get('/admin/hosts/list', function (req, res) {
   res.render('list-hosts', {
-    hosts: list.getAll()
+    hosts: list.getAll(),
+    accessTokens: AccessRegistry.getAll()
   });
 });
 app.get('/admin/hosts/add', function (req, res) {
   res.render('add-host');
 });
 app.post('/admin/hosts', urlencodedParser, function (req, res) {
+  var id = uid(5);
   list.add(new RFBHost({
-    id: uid(5),
-    readToken: uid(10),
-    writeToken: uid(10),
+    id: id,
     hostname: req.body.hostname,
     port: req.body.port,
     password: req.body.password
   }));
+  var accessRights = generateAccessTokens();
+  AccessRegistry.set(id, accessRights);
   res.redirect(301, '/admin/hosts/list');
 });
 app.get('/admin/hosts/delete/:id', function (req, res) {
@@ -87,8 +111,19 @@ app.get('/admin/hosts/delete/:id', function (req, res) {
 server.listen(8090);
 proxy.setCredentialsProvider(function (credentials) {
   var token = credentials.token;
+  // Optimize
+  var accessRights = AccessRegistry.getAll();
+  var id = Object.keys(accessRights).filter(function (k) {
+    var a = accessRights[k];
+    for (var key in a) {
+      if (a[key] === token) {
+        return true;
+      }
+    }
+    return false;
+  }).pop();
   var host = list.getAll().filter(function (c) {
-    return c.writeToken === token || c.readToken === token;
+    return c.id === id;
   }).pop();
   console.log(host, token, credentials);
   if (host) {
