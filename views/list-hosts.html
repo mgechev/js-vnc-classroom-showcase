@@ -28,8 +28,8 @@ No hosts
   <td><%= hosts[i].hostname %></td>
   <td><%= hosts[i].port %></td>
   <td><%= hosts[i].password %></td>
-  <td><input type="text" readonly value="" data-token="<%= accessTokens[hosts[i].id].readToken %>" class="copy-input"></td>
-  <td><input type="text" readonly value="" data-token="<%= accessTokens[hosts[i].id].writeToken %>" class="copy-input"></td>
+  <td><input type="text" readonly value="" data-token="<%= accessTokens[hosts[i].id][ACCESS_RIGHTS.read] %>" class="copy-input"></td>
+  <td><input type="text" readonly value="" data-token="<%= accessTokens[hosts[i].id][ACCESS_RIGHTS.write] %>" class="copy-input"></td>
   <td><a href="/admin/hosts/delete/<%= hosts[i].id%>" class="btn btn-danger">Remove</a></td>
 </tr>
 <% } %>

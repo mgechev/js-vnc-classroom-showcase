@@ -16,20 +16,14 @@ var list = new RFBHostCollection();
 var RFBHost = require('./lib/model/RFBHost');
 var RemoteConnection = require('./lib/model/RemoteConnection');
 var AccessRegistry = require('./lib/model/AccessRegistry');
-var ACCESS_RIGHTS = require('./lib/model/ACCESS_RIGHTS');
+var ACCESS_RIGHTS = require('./lib/model/AccessRights').ACCESS_RIGHTS;
+var AccessRights = require('./lib/model/AccessRights').AccessRights;
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 function generateAccessTokens(id) {
   var tokens = Object.keys(ACCESS_RIGHTS).map(function (key) {
-    var obj = {};
-    obj[key + 'Token'] = uid(5);
-    return obj;
-  }).reduce(function (a, c) {
-    for (var key in c) {
-      a[key] = c[key];
-    }
-    return a;
-  }, {});
+    return { type: ACCESS_RIGHTS[key], token: uid(5) };
+  });
   AccessRegistry.set(id, tokens);
 }
 
@@ -78,9 +72,19 @@ app.get('/admin', function (req, res) {
   res.redirect(301, '/admin/hosts/list');
 });
 app.get('/admin/hosts/list', function (req, res) {
+  var rights = AccessRegistry.getAll();
+  var tokens = Object.keys(rights).reduce(function (a, c) {
+    var current = rights[c];
+    a[c] = {};
+    current.forEach(function (t) {
+      a[c][t.type] = t.token;
+    });
+    return a;
+  }, {});
   res.render('list-hosts', {
     hosts: list.getAll(),
-    accessTokens: AccessRegistry.getAll()
+    accessTokens: tokens,
+    ACCESS_RIGHTS: ACCESS_RIGHTS
   });
 });
 app.get('/admin/hosts/add', function (req, res) {
@@ -113,19 +117,22 @@ proxy.setCredentialsProvider(function (credentials) {
   var token = credentials.token;
   // Optimize
   var accessRights = AccessRegistry.getAll();
-  var id = Object.keys(accessRights).filter(function (k) {
-    var a = accessRights[k];
-    for (var key in a) {
-      if (a[key] === token) {
-        return true;
+  var accessRight;
+  var userId;
+  for (var id in accessRights) {
+    var current = accessRights[id];
+    for (var i = 0; i < current.length; i += 1) {
+      if (current[i].token === token) {
+        accessRight = current[i];
+        userId = id;
+        break;
       }
     }
-    return false;
-  }).pop();
+  }
   var host = list.getAll().filter(function (c) {
-    return c.id === id;
+    return c.id === userId;
   }).pop();
-  console.log(host, token, credentials);
+  console.log(host, token, credentials, accessRight);
   if (host) {
     var keyboardEnabled;
     var mouseEnabled;
@@ -138,10 +145,7 @@ proxy.setCredentialsProvider(function (credentials) {
     // connects RFBHost with access rights
     return ES6Promise.resolve(new RemoteConnection({
       host: host,
-      accessRights: {
-        keyboardEnabled: keyboardEnabled,
-        mouseEnabled: mouseEnabled
-      }
+      accessRights: AccessRights[accessRight.type]
     }));
   }
   return ES6Promise.reject();
