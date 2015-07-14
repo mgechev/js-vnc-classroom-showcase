@@ -33,8 +33,6 @@ list.add(new RFBHost({
   hostname: '192.168.0.100',
   port: 5900,
   password: 'paralaks',
-  readToken: uid(10),
-  writeToken: uid(10),
   id: id
 }));
 
@@ -44,8 +42,6 @@ list.add(new RFBHost({
   hostname: '192.168.0.101',
   port: 5900,
   password: 'demo',
-  readToken: uid(10),
-  writeToken: uid(10),
   id: id
 }));
 
@@ -55,8 +51,6 @@ list.add(new RFBHost({
   hostname: '192.168.0.121',
   port: 5900,
   password: 'paralaks',
-  readToken: uid(10),
-  writeToken: uid(10),
   id: id
 }));
 
@@ -98,8 +92,7 @@ app.post('/admin/hosts', urlencodedParser, function (req, res) {
     port: req.body.port,
     password: req.body.password
   }));
-  var accessRights = generateAccessTokens();
-  AccessRegistry.set(id, accessRights);
+  generateAccessTokens(id);
   res.redirect(301, '/admin/hosts/list');
 });
 app.get('/admin/hosts/delete/:id', function (req, res) {
